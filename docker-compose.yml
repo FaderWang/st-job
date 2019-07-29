@@ -1,0 +1,54 @@
+version: '3'
+services:
+  # luna-nginx:
+  #   container_name: luna-nginx
+  #   build:
+  #     context: ./
+  #     dockerfile: ./docker/luna-nginx/Dockerfile
+  #   environment:
+  #     TZ: Asia/Shanghai
+  #   ports:
+  #   - "80:80"
+  #   volumes:
+  #   - ./logs/nginx:/var/log/nginx
+  #   depends_on:
+  #   - luna-server
+  #   restart: always
+    
+  st-mysql:
+    container_name: st-mysql
+    build:
+      context: ./
+      dockerfile: ./docker/st-mysql/Dockerfile
+    environment:
+      MYSQL_DATABASE: st
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_ROOT_HOST: '%'
+      TZ: Asia/Shanghai
+    expose:
+    - "3306"
+    restart: always
+
+  st-job:
+    container_name: st-job
+    build:
+      context: ./
+      dockerfile: ./docker/st-job/Dockerfile
+    # working_dir: /app
+    environment:
+      TZ: Asia/Shanghai
+      DB_USER: root
+      DB_PASSWORD: 123456
+    volumes:
+    - ./logs:/code/log/
+    ports:
+    - "8080:8080"
+    # command: mvn clean spring-boot:run -Dspring-boot.run.profiles=docker -Dmaven.test.skip=true
+    # entrypoint: /start.sh 
+    depends_on:
+    - st-mysql
+    # - luna-redis
+    restart: always
+
+
+    
